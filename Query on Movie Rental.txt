@@ -1,0 +1,41 @@
+1. The marketing team wants the fist name, last name and email of all customers?
+   
+SELECT 
+first_name,
+last_name,
+email
+FROM customer;
+
+2. Share a list of all customers with their payments. Show as highest payment amount?
+
+SELECT 
+customer_id,
+amount
+FROM payment
+ORDER BY customer_id, amount DESC
+
+3. What are the movie rating types?
+SELECT 
+DISTINCT rating 
+FROM film;
+
+4. Provide list of films on rent but not returned
+
+SELECT 
+*
+FROM rental
+WHERE return_date is NULL
+ORDER BY rental_date DESC
+
+
+5. Share a list of the districts where our customers reside
+
+SELECT 
+DISTINCT district
+FROM address
+
+6. How many movies are there that contain the 'Documentary' in the description.
+SELECT 
+COUNT(*) as movie_count
+FROM film
+WHERE description LIKE '%Drama%'
