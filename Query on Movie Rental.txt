@@ -39,3 +39,64 @@ SELECT
 COUNT(*) as movie_count
 FROM film
 WHERE description LIKE '%Drama%'
+
+7. How many customers have their firstname that is 3 letters long and either an 'X' or a 
+   'Y'as the last letter in the last name.
+
+SELECT 
+COUNT(*)
+FROM customer
+WHERE first_name LIKE '___'
+AND (last_name LIKE '%X' OR last_name LIKE '%Y')
+
+8. What is the minimum, maximum, average and total sum of film replacement cost
+
+SELECT
+MIN(replacement_cost) as Minimum_Cost,
+MAX(replacement_cost) as Maximum_Cost,
+ROUND(AVG(replacement_cost),1) as Average_Cost,
+SUM(replacement_cost) as Total_Cost
+FROM film
+
+
+9. Which employee had the highest sales amount in a single day
+
+SELECT
+staff_id, DATE(payment_date),SUM(amount) as total_amt
+FROM 
+payment
+GROUP BY staff_id, DATE(payment_date)
+ORDER BY total_amt DESC
+
+10. In 2020, April 28, 29 and 30 were days with very high revenue. Find the average payment amount grouped by customer and day. Consider days with payments more than 1.
+
+SELECT 
+customer_id
+, DATE(payment_date)
+, ROUND(AVG(amount),1) as Average_amt
+, COUNT(amount) as num_of_payment
+FROM
+payment
+WHERE DATE(payment_date) BETWEEN '2020-04-28' AND '2020-04-30'
+GROUP BY customer_id, DATE(payment_date)
+HAVING COUNT(amount) > 1
+ORDER BY AVG(amount) DESC
+
+
+11. Which customer had the longest average rental duration
+SELECT
+customer_id, AVG((return_date - rental_date)) as avg_rent_period
+FROM 
+rental
+GROUP BY customer_id
+ORDER BY avg_rent_period DESC
+LIMIT 1
+
+12. What was the rental durations for customer with id 35
+
+SELECT
+EXTRACT( day from (return_date - rental_date)) || ' day(s)' as rent_period
+FROM 
+rental
+WHERE customer_id = 35
+ORDER BY rent_period DESC
