@@ -100,3 +100,63 @@ FROM
 rental
 WHERE customer_id = 35
 ORDER BY rent_period DESC
+
+13. Segment the films into those in:
+a. PG,PG-13 or longer than 120mins
+b. With 'Drama' and longer than 90mins
+c. With 'Drama' and shorter than 90 mins
+d. Those with rental_rate below $1
+
+
+SELECT title,
+CASE
+WHEN rating IN ('PG', 'PG-13') OR length > 210 THEN 'Great Rating or Long (tier 1)'
+WHEN description LIKE '%Drama%' AND length > 90 THEN 'Long Drama (tier 2)'
+WHEN description LIKE '%Drama%' AND length <= 90 THEN 'Short Drama (tier 3)'
+WHEN rental_rate < 1 THEN 'Very Cheap (tier 4)'
+END segment
+FROM film
+WHERE CASE
+WHEN rating IN ('PG', 'PG-13') OR length > 210 THEN 'Great Rating or Long (tier 1)'
+WHEN description LIKE '%Drama%' AND length > 90 THEN 'Long Drama (tier 2)'
+WHEN description LIKE '%Drama%' AND length <= 90 THEN 'Short Drama (tier 3)'
+WHEN rental_rate < 1 THEN 'Very Cheap (tier 4)' 
+END IS NOT NULL
+
+
+14. List all the films with length more than the average length of all the films
+
+SELECT
+film_id, title
+FROM
+film
+WHERE length > (SELECT AVG(length) FROM film)
+
+15. List all the films that are available in the inventory in stire 2 more than 3 times
+
+SELECT
+*
+FROM 
+film
+WHERE film_id IN (SELECT
+film_id
+FROM 
+inventory
+WHERE store_id = 2
+GROUP BY film_id
+HAVING COUNT(*) > 3)
+
+
+16. List all the names (first and last) of customers with payments done '2020-01-25'
+
+
+SELECT 
+first_name,
+last_name
+FROM customer 
+WHERE customer_id IN (SELECT
+customer_id
+FROM payment
+WHERE DATE(payment_date) = '2020-01-25')
+
+
