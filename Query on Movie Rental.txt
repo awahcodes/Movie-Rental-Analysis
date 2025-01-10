@@ -159,4 +159,34 @@ customer_id
 FROM payment
 WHERE DATE(payment_date) = '2020-01-25')
 
+17. What is the Average total spent er day (average daily revenue)
+
+SELECT ROUND(AVG(total_amt),2)
+FROM (SELECT
+DATE(payment_date), SUM(amount) as total_amt
+FROM
+payment
+GROUP BY DATE(payment_date))
+
+18. By how much is each amount less than the maximum amount
+
+SELECT 
+*, (SELECT MAX(amount) FROM payment) - amount as diff_amt
+FROM
+payment	
+
+19. Show payments that have the highest amounts per customer
+
+SELECT
+*
+FROM
+payment p1
+WHERE amount = (SELECT MAX(amount) FROM payment p2
+                 WHERE p1.customer_id = p2.customer_id)
+
+				 ORDER BY customer_id
+
+20. Show the movie titles, their associated film_id and replacement_cost with the lowest replacement_costs for each rating category. Show the rating.
+
+
 
