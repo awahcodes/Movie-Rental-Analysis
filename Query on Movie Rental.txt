@@ -188,5 +188,27 @@ WHERE amount = (SELECT MAX(amount) FROM payment p2
 
 20. Show the movie titles, their associated film_id and replacement_cost with the lowest replacement_costs for each rating category. Show the rating.
 
+SELECT
+title, film_id, replacement_cost, rating
+FROM
+film as f1
+WHERE replacement_cost = (SELECT MIN(replacement_cost)FROM film as f2
+       WHERE f1.rating = f2.rating)
 
 
+
+
+
+
+21. Create a table to share with Data scientist of all customer list and their total spend.
+
+CREATE TABLE customer_total_spend
+AS
+SELECT 
+c.first_name, c.last_name, sum(amount) as total_amt
+FROM
+customer as c
+LEFT JOIN payment as p
+ON c.customer_id = p.customer_id
+GROUP BY c.first_name, c.last_name
+ORDER BY total_amt
