@@ -212,3 +212,53 @@ LEFT JOIN payment as p
 ON c.customer_id = p.customer_id
 GROUP BY c.first_name, c.last_name
 ORDER BY total_amt
+
+
+22. Show the total amount spent by each customer using window functions
+
+SELECT
+*,
+SUM(amount) OVER(PARTITION BY customer_id) as total_amt
+FROM payment
+
+23. Show all payment details including the number of payments that were made by this customer and that amount.
+
+SELECT
+*,
+COUNT(*) OVER(PARTITION BY customer_id,amount)
+FROM payment
+
+
+23. Show the running total of the amounts spent by each customer ordered by payment_id
+
+SELECT
+*,
+SUM(amount) OVER(PARTITION BY customer_id ORDER BY payment_id)
+FROM payment
+
+24. Write a query showing the customers' name, the country, and how many payments they have. Using the customer_list view.
+Afterwards create a ranking of the top customers with the most sales for each country. Filter to only top 3 customers per country.
+
+SELECT
+*
+FROM
+(SELECT
+name, country,
+COUNT(*)
+,RANK() OVER(PARTITION BY country ORDER BY COUNT(*) DESC)
+FROM customer_list as c
+LEFT JOIN payment as p
+ON c.id = p.customer_id
+GROUP BY  name, country)
+WHERE rank IN (1, 2, 3)
+
+25. Write a query that returns the revenue of the day and the revenue of the previous day. Also show the percentage growth.
+SELECT
+DATE(payment_date) as date, 
+SUM(amount) as total,
+LAG(SUM(amount)) OVER(ORDER BY DATE(payment_date)) as previous,
+SUM(amount) - LAG(SUM(amount)) OVER(ORDER BY DATE(payment_date)) as diff,
+ROUND(((SUM(amount) - LAG(SUM(amount)) OVER(ORDER BY DATE(payment_date))) * 100)/ LAG(SUM(amount)) OVER(ORDER BY DATE(payment_date)),1) as "% growth"
+FROM
+payment
+GROUP BY  date
