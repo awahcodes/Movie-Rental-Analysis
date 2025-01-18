@@ -262,3 +262,21 @@ ROUND(((SUM(amount) - LAG(SUM(amount)) OVER(ORDER BY DATE(payment_date))) * 100)
 FROM
 payment
 GROUP BY  date
+
+26. Write a query that returns the sum of the amount for each customer (first_name and last_name) and each staff_id. Also add the overall revenue per customer
+
+SELECT
+c.first_name
+, c.last_name,
+p.staff_id
+, SUM(amount)
+FROM payment as p
+LEFT JOIN customer as c
+ON p.customer_id = c.customer_id
+GROUP BY
+GROUPING SETS(
+
+( c.first_name, c.last_name),
+(c.first_name, c.last_name, staff_id)
+)
+ORDER BY c.first_name, c.last_name
